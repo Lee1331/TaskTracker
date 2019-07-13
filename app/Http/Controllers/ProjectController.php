@@ -9,13 +9,23 @@ use App\Project;
 class ProjectController extends Controller
 {
     /**
+     * Instantiate a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth')->only('index', 'show','store');
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        $projects = Project::all();
+        $projects = auth()->user()->projects;
         return view('projects.index', compact('projects'));
     }
 
@@ -37,8 +47,15 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        $attributes = request()->validate(['title' => 'required', 'description' => 'required']);
-        Project::create($attributes);
+        $attributes = request()->validate([
+            'title' => 'required',
+            'description' => 'required',
+            // 'owner_id' => 'required',
+        ]);
+
+        // $attributes['owner_id'] = auth()->id();
+        auth()->user()->projects()->create($attributes);
+        // Project::create($attributes);
 
         return redirect('/projects');
     }
@@ -54,6 +71,9 @@ class ProjectController extends Controller
     {
         //
         // $project = Project::findOrFail($id);
+        if( auth()->user()->isNot($project->owner)){
+            abort(403);
+        }
         return view('projects.show', compact('project'));
     }
 
