@@ -15,7 +15,7 @@ class ProjectController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth')->only('index', 'show','store');
+        $this->middleware('auth')->only('index', 'create', 'show', 'store');
     }
 
     /**
@@ -36,7 +36,7 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        //
+        return view('projects.create');
     }
 
     /**
