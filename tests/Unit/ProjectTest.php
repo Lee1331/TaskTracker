@@ -17,12 +17,23 @@ class ProjectTest extends TestCase
     public function test_projects_have_a_path()
     {
         $project = factory('App\Project')->create();
-        $this->assertEquals('/projects/' . $project-id, $project->path());
+        $this->assertEquals('/projects/' . $project->id, $project->path());
     }
 
-    public function test_project_belong_to_an_owner()
+    // public function test_projects_belong_to_an_owner()
+    // {
+    //     // $this->signIn();
+    //     $project = factory('App\Project')->create();
+    //     $this->assertInstanceOf('App\User', $project->owner());
+    // }
+
+    public function test_projects_can_add_new_tasks()
     {
         $project = factory('App\Project')->create();
-        $this->assertInstanceOf('App\User', $project->owner());
+        $task = $project->addTask('test task');
+
+        $this->assertCount(1, $project->tasks);
+        $this->assertTrue($project->tasks->contains($task));
+
     }
 }

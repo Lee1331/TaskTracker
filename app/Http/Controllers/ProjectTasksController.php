@@ -3,21 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use App\Project;
+use App\Task;
 
-class ProjectController extends Controller
+class ProjectTasksController extends Controller
 {
-    /**
-     * Instantiate a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth')->only('index', 'create', 'show', 'store');
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -25,8 +15,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = auth()->user()->projects;
-        return view('projects.index', compact('projects'));
+        //
     }
 
     /**
@@ -36,7 +25,7 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        return view('projects.create');
+        //
     }
 
     /**
@@ -45,18 +34,16 @@ class ProjectController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    // public function store(Request $request)
+    public function store(Project $project)
     {
-        $attributes = request()->validate([
-            'title' => 'required',
-            'description' => 'required',
-            // 'owner_id' => 'required',
-        ]);
+        //
+        if(auth()->user()->isNot($project->owner)){
+            abort(403);
+        }
 
-        // $attributes['owner_id'] = auth()->id();
-       $project = auth()->user()->projects()->create($attributes);
-        // Project::create($attributes);
-
+        request()->validate(['body' => 'required']);
+        $project->addTask(request('body'));
         return redirect($project->path());
     }
 
@@ -66,15 +53,9 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    // public function show($id)
-    public function show(Project $project)
+    public function show($id)
     {
         //
-        // $project = Project::findOrFail($id);
-        if( auth()->user()->isNot($project->owner)){
-            abort(403);
-        }
-        return view('projects.show', compact('project'));
     }
 
     /**
@@ -95,9 +76,18 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Project $project, Task $task)
     {
-        //
+        if(auth()->user()->isNot($project->owner)){
+            abort(403);
+        }
+
+        $task->update([
+            'body' => request('body'),
+            'completed' => request()->has('completed')
+        ]);
+
+        return redirect($project->path());
     }
 
     /**
