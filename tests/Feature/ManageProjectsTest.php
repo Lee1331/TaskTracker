@@ -17,7 +17,21 @@ class ProjectsTests extends TestCase
         $this->followingRedirects()
             ->post('/projects', $attributes = factory(Project::class)->raw())
             ->assertSee($attributes['title'])
-            ->assertSee($attributes['description']);
+            ->assertSee($attributes['description'])
+            ->assertSee($attributes['notes']);
+    }
+
+    public function test_a_user_can_update_a_project()
+    {
+        // $this->withoutExceptionHandling();
+        $this->signIn();
+        $project = factory('App\Project')->create(['owner_id' => auth()->id()]);
+
+        $this->patch($project->path(), [
+            'notes' => 'changed',
+        ])->assertRedirect($project->path());
+
+        $this->assertDatabaseHas('projects', ['notes' => 'changed']);
     }
 
     public function test_guests_cannot_manage_projects()
@@ -36,6 +50,13 @@ class ProjectsTests extends TestCase
         $this->signIn();
         $project = factory('App\Project')->create();
         $this->get($project->path())->assertStatus(403);
+    }
+
+    public function test_an_authenticated_user_cannot_update_other_users_projects()
+    {
+        $this->signIn();
+        $project = factory('App\Project')->create();
+        $this->patch($project->path(), [])->assertStatus(403);
     }
 
     public function test_a_project_requires_a_title()

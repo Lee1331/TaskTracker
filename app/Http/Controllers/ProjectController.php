@@ -25,7 +25,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = auth()->user()->projects;
+        $projects = auth()->user()->projects()->orderBy('updated_at', 'desc')->get();
         return view('projects.index', compact('projects'));
     }
 
@@ -49,12 +49,13 @@ class ProjectController extends Controller
     {
         $attributes = request()->validate([
             'title' => 'required',
-            'description' => 'required',
+            'description' => 'required|max:100',
+            'notes' => 'min:3'
             // 'owner_id' => 'required',
         ]);
 
         // $attributes['owner_id'] = auth()->id();
-       $project = auth()->user()->projects()->create($attributes);
+        $project = auth()->user()->projects()->create($attributes);
         // Project::create($attributes);
 
         return redirect($project->path());
@@ -69,11 +70,8 @@ class ProjectController extends Controller
     // public function show($id)
     public function show(Project $project)
     {
-        //
-        // $project = Project::findOrFail($id);
-        if( auth()->user()->isNot($project->owner)){
-            abort(403);
-        }
+        $this->authorize('update', $project);
+
         return view('projects.show', compact('project'));
     }
 
@@ -95,9 +93,16 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Project $project)
     {
-        //
+
+        $this->authorize('update', $project);
+
+        $project->update([
+            request('notes')
+        ]);
+
+        return redirect($project->path());
     }
 
     /**
