@@ -1,7 +1,7 @@
 module.exports = {
 
     theme: {
-        extend: {},
+        // extend: {},
         shadows: {
             default: '0 0 5px 0 rgba(0, 0, 0, 0.08)',
         },
@@ -13,9 +13,9 @@ module.exports = {
         },
     },
     variants: {},
-    plugins: [
+    plugin: [
         // ...
-        require('tailwindcss'),
+        require('tailwindcss')('tailwind.js'),
         require('autoprefixer'),
         // ...
     ]
