@@ -15,7 +15,7 @@ class ProjectController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth')->only('index', 'create', 'show', 'store');
+        $this->middleware('auth');
     }
 
     /**
@@ -47,12 +47,7 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        $attributes = request()->validate([
-            'title' => 'required',
-            'description' => 'required|max:100',
-            'notes' => 'min:3'
-            // 'owner_id' => 'required',
-        ]);
+        $attributes = $this->validateRequest();
 
         // $attributes['owner_id'] = auth()->id();
         $project = auth()->user()->projects()->create($attributes);
@@ -81,9 +76,9 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Project $project)
     {
-        //
+        return view('projects.edit', compact('project'));
     }
 
     /**
@@ -93,16 +88,10 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Project $project)
+    public function update(UpdateProjectRequest $request, Project $project)
     {
-
-        $this->authorize('update', $project);
-
-        $project->update([
-            request('notes')
-        ]);
-
-        return redirect($project->path());
+        // $project->update($request->validated());
+        return redirect($request->save()->path());
     }
 
     /**
@@ -115,4 +104,5 @@ class ProjectController extends Controller
     {
         //
     }
+
 }

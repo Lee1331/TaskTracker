@@ -8,7 +8,8 @@
                     My Projects
                 </a>
                 / {{$project->title}}</p>
-            <a href="/projects/create">Create New Project</a>
+            {{-- <a href="/projects/create">Create New Project</a> --}}
+            <a href="{{$project->path() . '/edit'}}">Edit Project</a>
         </div>
     </header>
     <main>

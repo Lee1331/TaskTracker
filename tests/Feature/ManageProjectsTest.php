@@ -6,6 +6,8 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Project;
+use Facades\Tests\Setup\ProjectFactory;
+
 class ProjectsTests extends TestCase
 {
     use WithFaker, RefreshDatabase;
@@ -23,15 +25,34 @@ class ProjectsTests extends TestCase
 
     public function test_a_user_can_update_a_project()
     {
-        // $this->withoutExceptionHandling();
-        $this->signIn();
-        $project = factory('App\Project')->create(['owner_id' => auth()->id()]);
+        $project = ProjectFactory::create();
 
-        $this->patch($project->path(), [
-            'notes' => 'changed',
-        ])->assertRedirect($project->path());
+        $this->actingAs($project->owner)
+            ->patch($project->path(), $attributes = [
+                'title' => 'changed',
+                'description' => 'changed',
+                'notes' => 'changed',
+            ])->assertRedirect($project->path());
 
-        $this->assertDatabaseHas('projects', ['notes' => 'changed']);
+            $this->get($project->path(). '/edit')->assertOk();
+
+
+        $this->assertDatabaseHas('projects', $attributes);
+    }
+
+    public function test_a_user_can_update_a_projects_notes()
+    {
+        $project = ProjectFactory::create();
+
+        $this->actingAs($project->owner)
+            ->patch($project->path(), $attributes = [
+                'notes' => 'changed',
+            ]);
+
+            $this->get($project->path(). '/edit')->assertOk();
+
+
+        $this->assertDatabaseHas('projects', $attributes);
     }
 
     public function test_guests_cannot_manage_projects()
@@ -39,9 +60,10 @@ class ProjectsTests extends TestCase
         // $this->withoutExceptionHandling();
         $project = factory('App\Project')->create();
 
-        $this->post('/projects', $project->toArray())->assertRedirect('login');
         $this->get('/projects')->assertRedirect('login');
         $this->get('/projects/create')->assertRedirect('login');
+        $this->get($project->path(). '/edit')->assertRedirect('login');
+        $this->post('/projects', $project->toArray())->assertRedirect('login');
         $this->get($project->path())->assertRedirect('login');
     }
 
@@ -56,7 +78,7 @@ class ProjectsTests extends TestCase
     {
         $this->signIn();
         $project = factory('App\Project')->create();
-        $this->patch($project->path(), [])->assertStatus(403);
+        $this->patch($project->path())->assertStatus(403);
     }
 
     public function test_a_project_requires_a_title()
@@ -77,8 +99,10 @@ class ProjectsTests extends TestCase
     {
         $this->signIn();
 
-        $project = factory('App\Project')->create(['owner_id' => auth()->id()]);
-        $this->get($project->path())
+        $project = ProjectFactory()->create(
+
+        );
+        $this->actingAs($project->owner)->get($project->path())
         ->assertSee($project->title)
         ->assertSee($project->description);
     }
