@@ -15,15 +15,15 @@ class Project extends Model
     }
 
     public function owner(){
-        return $this->belongsTo(User::Class);
+        return $this->belongsTo(User::class);
     }
 
     public function tasks(){
-        return $this->hasMany(Task::Class);
+        return $this->hasMany(Task::class);
     }
 
     public function activity(){
-        return $this->hasMany(Activity::Class);
+        return $this->hasMany(Activity::class)->latest();
     }
 
     public function addTask($body){
@@ -32,8 +32,8 @@ class Project extends Model
 
     public function recordActivity($description)
     {
-        $this->activity()->create([
+        $this->activity()->create(
             compact('description')
-        ]);
+        );
     }
 }

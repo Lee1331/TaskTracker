@@ -56,6 +56,10 @@ class ProjectTasksTest extends TestCase
             ->patch($project->tasks[0]->path(), [
             'body' => 'changed',
         ]);
+
+        $this->assertDatabaseHas('tasks', [
+            'body' => 'changed'
+        ]);
     }
 
     public function test_a_task_can_be_completed()
@@ -97,15 +101,12 @@ class ProjectTasksTest extends TestCase
 
     public function test_a_task_requires_a_body()
     {
-        $this->withoutExceptionHandling();
-
         $this->signIn();
 
         $project = ProjectFactory::create();
 
-
         $attributes = factory('App\Task')->raw(['body' => '']);
-        $this->acting->as($project->owner)
+        $this->actingAs($project->owner)
             ->post($project->path() . '/tasks', $attributes)
             ->assertSessionHasErrors('body');
     }

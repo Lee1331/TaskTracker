@@ -38,6 +38,13 @@ class TriggerActivityTest extends TestCase
         $project->addTask('new task');
 
         $this->assertCount(2, $project->activity);
+
+        tap($project->activity->last(), function($activity){
+            $this->assertEquals('created_task', $activity->description);
+            $this->assertInstanceOf('App\Task', $activity->subject);
+            $this->assertEquals('new task', $activity->subject->body);
+
+        });
     }
 
     public function test_completing_a_task()
@@ -52,7 +59,12 @@ class TriggerActivityTest extends TestCase
             ]);
 
         $this->assertCount(3, $project->activity);
-        $this->assertEquals('completed_task', $project->activity->last()->description);
+
+        tap($project->activity->last(), function($activity){
+            $this->assertEquals('completed_task', $activity->description);
+            $this->assertInstanceOf('App\Task', $activity->subject);
+
+        });
     }
 
     public function test_incompleting_a_task()
@@ -81,7 +93,7 @@ class TriggerActivityTest extends TestCase
     public function test_deleting_a_task()
     {
         $project = ProjectFactory::withTasks(1)->create();
-        $project->task[0]->delete();
+        $project->tasks[0]->delete();
         $this->assertCount(3, $project->activity);
 
     }

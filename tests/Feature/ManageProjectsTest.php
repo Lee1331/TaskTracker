@@ -26,6 +26,8 @@ class ProjectsTests extends TestCase
 
     public function test_a_user_can_update_a_project()
     {
+        $this->withoutExceptionHandling();
+
         $project = ProjectFactory::create();
 
         $this->actingAs($project->owner)
@@ -35,14 +37,15 @@ class ProjectsTests extends TestCase
                 'notes' => 'changed',
             ])->assertRedirect($project->path());
 
-            $this->get($project->path(). '/edit')->assertOk();
-
+            $this->get($project->path() . '/edit')->assertOk();
 
         $this->assertDatabaseHas('projects', $attributes);
     }
 
     public function test_a_user_can_update_a_projects_notes()
     {
+        // $this->withoutExceptionHandling();
+
         $project = ProjectFactory::create();
 
         $this->actingAs($project->owner)
@@ -50,8 +53,7 @@ class ProjectsTests extends TestCase
                 'notes' => 'changed',
             ]);
 
-            $this->get($project->path(). '/edit')->assertOk();
-
+            // $this->get($project->path(). '/edit')->assertOk();
 
         $this->assertDatabaseHas('projects', $attributes);
     }
@@ -84,8 +86,6 @@ class ProjectsTests extends TestCase
 
     public function test_a_project_requires_a_title()
     {
-        $this->withoutExceptionHandling();
-
         $this->signIn();
         $attributes = factory('App\Project')->raw(['title' => '']);
         $this->post('/projects', $attributes)->assertSessionHasErrors('title');

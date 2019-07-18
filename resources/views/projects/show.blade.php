@@ -49,13 +49,15 @@
                     </form>
                 </div>
             </div>
-            <div class="lg:w-1/4 px-3">
+            <div class="lg:w-1/4 px-3 lg:py-8">
                 {{-- <div class="card">
                     <h1>{{$project->title}}</h1>
                     <h1>{{$project->description}}</h1>
                     <a href="/projects">Go Back</a>
                 </div> --}}
                 @include('projects.card')
+
+                @include('projects.activity.card')
             </div>
         </div>
     </main>

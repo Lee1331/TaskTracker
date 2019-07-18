@@ -5,7 +5,7 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-
+use App\Project;
 class TaskTest extends TestCase
 {
     use RefreshDatabase;
@@ -13,13 +13,13 @@ class TaskTest extends TestCase
     public function test_task_belongs_to_project()
     {
         $task = factory('App\Task')->create();
-        $this->assertInstanceOf(Project::class(), $task->project);
+        $this->assertInstanceOf(Project::class, $task->project);
     }
 
     public function test_tasks_have_a_path()
     {
         $task = factory('App\Task')->create();
-        $this->assertEquals('/projects/{$task->project->id}/tasks/{$task->id}', $task->path());
+        $this->assertEquals("/projects/{$task->project->id}/tasks/{$task->id}", $task->path());
     }
 
     public function test_tasks_can_be_completed()
