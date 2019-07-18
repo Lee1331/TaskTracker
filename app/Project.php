@@ -4,9 +4,12 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Activity;
+use App\RecordsActivity;
 
 class Project extends Model
 {
+    use RecordsActivity;
+
     protected $guarded = [];
 
     public function path(){
@@ -28,12 +31,5 @@ class Project extends Model
 
     public function addTask($body){
         return $this->tasks()->create(compact('body'));
-    }
-
-    public function recordActivity($description)
-    {
-        $this->activity()->create(
-            compact('description')
-        );
     }
 }

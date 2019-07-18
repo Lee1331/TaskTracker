@@ -3,11 +3,15 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\RecordsActivity;
 
 class Task extends Model
 {
-    //
+    use RecordsActivity;
+
     protected $guarded = [];
+
+    protected static $recordableEvents = ['created', 'deleted'];
 
     /**
      * The attributes that should be cast to native types.
@@ -57,28 +61,6 @@ class Task extends Model
     {
         $this->update(['completed' => false]);
         $this->recordActivity('incompleted_task');
-
     }
 
-    /**
-     * Record activity for a project.
-     *
-     * @param string $description
-     */
-    public function recordActivity($description)
-    {
-        $this->activity()->create([
-            'project_id' => $this->project_id,
-            'description' => $description
-        ]);
-    }
-    /**
-     * The activity feed for the project.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
-     */
-    public function activity()
-    {
-        return $this->morphMany(Activity::class, 'subject')->latest();
-    }
 }

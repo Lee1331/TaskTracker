@@ -10,7 +10,7 @@ class Activity extends Model
     protected $guarded = [];
 
     /**
-     * The attributes that should be cast to native types.
+     * The attributes that should be cast to native types. - treat 'changes' field as an array when we insert it into the db
      *
      * @var array
      */
