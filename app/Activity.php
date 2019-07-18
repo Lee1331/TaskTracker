@@ -23,6 +23,11 @@ class Activity extends Model
         return $this->morphTo();
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::Class);
+    }
+
     public function project(){
         return $this->belongsTo(Project::Class);
     }
