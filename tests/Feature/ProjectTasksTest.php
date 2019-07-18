@@ -28,7 +28,6 @@ class ProjectTasksTest extends TestCase
 
     public function test_project_owners_can_update_existing_tasks()
     {
-
         $this->signIn();
 
         $project = ProjectFactory::withTasks(1)->create();
@@ -41,7 +40,6 @@ class ProjectTasksTest extends TestCase
 
     public function test_a_project_can_have_tasks()
     {
-
         $project = ProjectFactory::create();
 
         $this->actingAs($project->owner)->post($project->path() . '/tasks', ['body' => 'test task']);
@@ -50,10 +48,19 @@ class ProjectTasksTest extends TestCase
             ->assertSee('test task');
     }
 
-    public function test_a_task_can_be_updated(){
-
+    public function test_a_task_can_be_updated()
+    {
         $project = ProjectFactory::withTasks(1)->create();
 
+        $this->actingAs($project->owner)
+            ->patch($project->tasks[0]->path(), [
+            'body' => 'changed',
+        ]);
+    }
+
+    public function test_a_task_can_be_completed()
+    {
+        $project = ProjectFactory::withTasks(1)->create();
 
         $this->actingAs($project->owner)
             ->patch($project->tasks[0]->path(), [
@@ -67,8 +74,31 @@ class ProjectTasksTest extends TestCase
         ]);
     }
 
+    public function test_a_task_can_be_marked_as_incomplete()
+    {
+        $project = ProjectFactory::withTasks(1)->create();
+
+        $this->actingAs($project->owner)
+            ->patch($project->tasks[0]->path(), [
+            'body' => 'changed',
+            'completed' => true,
+        ]);
+
+        $this->patch($project->tasks[0]->path(), [
+            'body' => 'changed',
+            'completed' => false,
+        ]);
+
+        $this->assertDatabaseHas('tasks', [
+            'body' => 'changed',
+            'completed' => false,
+        ]);
+    }
+
     public function test_a_task_requires_a_body()
     {
+        $this->withoutExceptionHandling();
+
         $this->signIn();
 
         $project = ProjectFactory::create();

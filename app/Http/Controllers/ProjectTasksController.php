@@ -84,14 +84,13 @@ class ProjectTasksController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update( Project $project, Task $task)
+    public function update(Project $project, Task $task)
     {
         $this->authorize('update', $task->project);
 
-        $task->update([
-            'body' => request('body'),
-            'completed' => request()->has('completed')
-        ]);
+        $task->update(request()->validate(['body' => 'required']));
+
+        request('completed') ? $task->complete() : $task->incomplete();
 
         return redirect($project->path());
     }

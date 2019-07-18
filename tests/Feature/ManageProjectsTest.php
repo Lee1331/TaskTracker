@@ -2,11 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Project;
+use App\Task;
+use Facades\Tests\Setup\ProjectFactory;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Project;
-use Facades\Tests\Setup\ProjectFactory;
 
 class ProjectsTests extends TestCase
 {
@@ -17,7 +18,7 @@ class ProjectsTests extends TestCase
         $this->signIn();
         $this->get('/projects/create')->assertStatus(200);
         $this->followingRedirects()
-            ->post('/projects', $attributes = factory(Project::class)->raw())
+            ->post('/projects', $attributes = factory('App\Project')->raw())
             ->assertSee($attributes['title'])
             ->assertSee($attributes['description'])
             ->assertSee($attributes['notes']);
@@ -83,6 +84,8 @@ class ProjectsTests extends TestCase
 
     public function test_a_project_requires_a_title()
     {
+        $this->withoutExceptionHandling();
+
         $this->signIn();
         $attributes = factory('App\Project')->raw(['title' => '']);
         $this->post('/projects', $attributes)->assertSessionHasErrors('title');
@@ -90,6 +93,7 @@ class ProjectsTests extends TestCase
 
     public function test_a_project_requires_a_description()
     {
+
         $this->signIn();
         $attributes = factory('App\Project')->raw(['description' => '']);
         $this->post('/projects', $attributes)->assertSessionHasErrors('description');
@@ -97,12 +101,12 @@ class ProjectsTests extends TestCase
 
     public function test_a_user_can_view_their_projects()
     {
+        $this->withoutExceptionHandling();
         $this->signIn();
 
-        $project = ProjectFactory()->create(
-
-        );
-        $this->actingAs($project->owner)->get($project->path())
+        $project = ProjectFactory::create();
+        $this->actingAs($project->owner)
+        ->get($project->path())
         ->assertSee($project->title)
         ->assertSee($project->description);
     }

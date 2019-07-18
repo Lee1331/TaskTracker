@@ -2,9 +2,9 @@
 
 namespace Tests\Setup;
 
-use App\User;
 use App\Project;
 use App\Task;
+use App\User;
 
 class ProjectFactory
 {
@@ -28,14 +28,15 @@ class ProjectFactory
 
     public function create()
     {
-        $project = factory(Project::class)->create([
-            'owner_id' => $this->user ?? factory(User::class), //also works, preventing the need for... 'factory(User::class)->create()->id()'
+        $project = factory('App\Project')->create([
+            'owner_id' => $this->user ?? factory('App\User'), //also works, preventing the need for... 'factory(User::class)->create()->id()'
         ]);
 
-        factory(Task::class, $this->tasksCount)->create([
+        factory('App\Task', $this->tasksCount)->create([
             'project_id' => $project->id
         ]);
 
         return $project;
+
     }
 }

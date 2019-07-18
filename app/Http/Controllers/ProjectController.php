@@ -45,13 +45,15 @@ class ProjectController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store()
     {
-        $attributes = $this->validateRequest();
+        // $attributes = $this->validateRequest();
+        // $project = auth()->user()->projects()->create($attributes);
 
         // $attributes['owner_id'] = auth()->id();
-        $project = auth()->user()->projects()->create($attributes);
         // Project::create($attributes);
+
+        $project = auth()->user()->projects()->create($this->validateRequest());
 
         return redirect($project->path());
     }
@@ -103,6 +105,15 @@ class ProjectController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    protected function validateRequest()
+    {
+        return request()->validate([
+            'title' => 'sometimes|required',
+            'description' => 'sometimes|required',
+            'notes' => 'nullable'
+        ]);
     }
 
 }
