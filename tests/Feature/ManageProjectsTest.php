@@ -24,6 +24,28 @@ class ProjectsTests extends TestCase
             ->assertSee($attributes['notes']);
     }
 
+    public function test_a_user_can_delete_a_project(){
+        $project = ProjectFactory::create();
+
+        $this->actingAs($project->owner)
+            ->delete($project->path())
+            ->assertRedirect('/projects');
+
+        $this->assertDatabaseMissing('projects', $project->only('id'));
+    }
+
+    public function test_unauthorized_users_cannot_delete_projects(){
+        $project = ProjectFactory::create();
+
+        $this->delete($project->path())
+            ->assertRedirect('/login');
+
+            $this->signIn();
+            $this->delete($project->path())->assertStatus(403);
+
+        $this->assertDatabaseHas('projects', $project->only('id'));
+    }
+
     public function test_a_user_can_update_a_project()
     {
         $this->withoutExceptionHandling();
@@ -82,6 +104,16 @@ class ProjectsTests extends TestCase
         $this->signIn();
         $project = factory('App\Project')->create();
         $this->patch($project->path())->assertStatus(403);
+    }
+
+    public function test_a_user_can_see_all_projects_they_have_been_invited_to_on_their_dashboard()
+    {
+        // $this->withoutExceptionHandling();
+
+
+        $project = tap(ProjectFactory::create())->invite($this->signIn());
+
+        $this->get('/projects')->assertSee($project->title);
     }
 
     public function test_a_project_requires_a_title()

@@ -34,7 +34,7 @@ trait RecordsActivity
             return static::$recordableEvents;
         }
         //otherwise use the defaults
-        return ['created', 'updated', 'deleted'];
+        return ['created', 'updated'];
     }
 
     /**
