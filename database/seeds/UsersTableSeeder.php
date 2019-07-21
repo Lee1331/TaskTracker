@@ -20,6 +20,11 @@ class UsersTableSeeder extends Seeder
             'email' => 'test@gmail.com',
             'password' => bcrypt('secret'),
         ]);
+        DB::table('users')->insert([
+            'name' => 'lee',
+            'email' => 'lee1331@hotmail.co.uk',
+            'password' => bcrypt('secret'),
+        ]);
 
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }

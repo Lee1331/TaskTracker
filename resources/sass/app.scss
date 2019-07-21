@@ -2,17 +2,17 @@
 // @import url('https://fonts.googleapis.com/css?family=Nunito');
 
 // Variables
-// @import 'variables';
+@import 'variables';
 // Bootstrap
 // @import '~bootstrap/scss/bootstrap';
 
 //Tailwind
 @tailwind base;
+// @import 'components/button';
 // @import 'components/card';
 @tailwind components;
 .card {
     @apply bg-white rounded-lg p-5 shadow
 }
-
 
 @tailwind utilities;
