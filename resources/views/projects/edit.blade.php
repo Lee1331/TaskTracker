@@ -6,10 +6,9 @@
     <form method="POST" action="{{$project->path()}}" class="lg:w-1/2 lg:max-auto bg-white p-6 md:py-12 md:px-16 rounded shadow">
         @method('PATCH')
 
-        @include('projects.form', [
-            'buttonText' => 'Edit Project'
-
-        ])
+        @include ('projects.form', [
+                'buttonText' => 'Update Project'
+            ])
     </form>
     {{-- <form method="POST" action="{{$project->path()}}" class="lg:w-1/2 lg:max-auto bg-white p-6 md:py-12 md:px-16 rounded shadow">
         @method('PATCH')

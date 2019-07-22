@@ -40,10 +40,11 @@ class ProjectsTests extends TestCase
         $this->delete($project->path())
             ->assertRedirect('/login');
 
-            $this->signIn();
-            $this->delete($project->path())->assertStatus(403);
-
+        $user = $this->signIn();
+        $this->actingAs($user)->delete($project->path())->assertStatus(403);
         $this->assertDatabaseHas('projects', $project->only('id'));
+
+        $project->invite($user);
     }
 
     public function test_a_user_can_update_a_project()

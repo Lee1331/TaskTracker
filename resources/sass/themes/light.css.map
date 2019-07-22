@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAAA,YAAY,CAAC;EACT,uBAAuB,CAAA,QAAC;EACxB,uBAAuB,CAAA,MAAC;EACxB,yBAAyB,CAAA,QAAC;EAC1B,yBAAyB,CAAA,MAAC;EAE1B,oBAAoB,CAAA,KAAC;EACrB,mBAAmB,CAAA,QAAC;EACpB,yBAAyB,CAAA,QAAC;EAC1B,kBAAkB,CAAA,mBAAC;EACnB,wBAAwB,CAAA,yBAAC;EACzB,wBAAwB,CAAA,QAAC;CAC5B",
+    "sources": [
+        "light.scss"
+    ],
+    "names": [],
+    "file": "light.css"
+}
